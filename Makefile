@@ -65,7 +65,6 @@ BIN = $(CP) -O binary -S
 CFLAGS = $(ARCH) \
 $(OPT) \
 $(STD) \
-$(C_INCLUDES) \
 -msmall-data-limit=0 \
 -msave-restore \
 -fmessage-length=0 \
@@ -73,7 +72,9 @@ $(C_INCLUDES) \
 -ffunction-sections \
 -fdata-sections \
 -fno-common \
+-fstack-usage \
 -Wunused -Wuninitialized \
+$(C_INCLUDES) \
 -MMD -MP -MF"$(@:%.o=%.d)"
 
 ASFLAGS = $(ARCH) $(OPT) -x assembler
@@ -81,12 +82,21 @@ ASFLAGS = $(ARCH) $(OPT) -x assembler
 # 链接文件定义
 LDSCRIPT = Core/Ld/Link.ld
 # 链接库定义
-LIBS = -lc -lm -lnosys
+LIBS = -lnosys
 
 # 链接选项
 LDFLAGS = $(ARCH) \
 $(OPT) \
 $(STD) \
+-msmall-data-limit=0 \
+-msave-restore \
+-fmessage-length=0 \
+-fsigned-char \
+-ffunction-sections \
+-fdata-sections \
+-fno-common \
+-fstack-usage \
+-Wunused -Wuninitialized \
 -T$(LDSCRIPT) \
 -nostartfiles \
 -Xlinker \
@@ -126,7 +136,7 @@ $(BUILD_DIR)/%.o:%.S Makefile | $(BUILD_DIR)
 # 链接目标文件为可执行程序
 $(BUILD_DIR)/$(BUILD_TARGET).elf:$(OBJECTS) Makefile
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
-	$(SZ) $@
+	$(SZ) --format=berkeley $@
 
 # 生成hex文件
 $(BUILD_DIR)/%.hex:$(BUILD_DIR)/%.elf | $(BUILD_DIR)
