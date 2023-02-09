@@ -155,11 +155,19 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 erase:
-	LD_LIBRARY_PATH="$(WCH_OPENOCD_LD):$(LD_LIBRARY_PATH)" $(WCH_OPENOCD) -f $(WCH_OPENOCD_CFG) -c init -c halt -c "flash erase_sector wch_riscv 0 last" -c exit
+	LD_LIBRARY_PATH="$(WCH_OPENOCD_LD):$(LD_LIBRARY_PATH)" "$(WCH_OPENOCD)" -f $(WCH_OPENOCD_CFG) -c init -c halt -c "flash erase_sector wch_riscv 0 last" -c exit
 
-flash:
-	LD_LIBRARY_PATH="$(WCH_OPENOCD_LD):$(LD_LIBRARY_PATH)" $(WCH_OPENOCD) -f $(WCH_OPENOCD_CFG) -c init -c halt -c "flash erase_sector wch_riscv 0 last " -c "program $(BUILD_DIR)/$(BUILD_TARGET).elf" -c "verify_image $(BUILD_DIR)/$(BUILD_TARGET).elf" -c reset -c resume -c exit
-# openocd -f  $OpenOCDTarget -c init -c halt -c "flash erase_sector wch_riscv 0 last" -c "program $1" -c "verify_image $1" -c wlink_reset_resume -c exit
+flash: all
+	LD_LIBRARY_PATH="$(WCH_OPENOCD_LD):$(LD_LIBRARY_PATH)" "$(WCH_OPENOCD)" -f $(WCH_OPENOCD_CFG) -c init -c halt -c "flash erase_sector wch_riscv 0 last " -c "program $(BUILD_DIR)/$(BUILD_TARGET).elf" -c "verify_image $(BUILD_DIR)/$(BUILD_TARGET).elf" -c reset -c resume -c exit
 
 reset:
-	LD_LIBRARY_PATH="$(WCH_OPENOCD_LD):$(LD_LIBRARY_PATH)" $(WCH_OPENOCD) -f $(WCH_OPENOCD_CFG) -c init -c reset -c resume -c exit
+	LD_LIBRARY_PATH="$(WCH_OPENOCD_LD):$(LD_LIBRARY_PATH)" "$(WCH_OPENOCD)" -f $(WCH_OPENOCD_CFG) -c init -c reset -c resume -c exit
+
+start_openocd:
+	LD_LIBRARY_PATH="$(WCH_OPENOCD_LD):$(LD_LIBRARY_PATH)" "$(WCH_OPENOCD)" -f $(WCH_OPENOCD_CFG)
+
+stop_openocd:
+	pkill -f "$(WCH_OPENOCD)"
+
+gdb:
+	$(PREFIX)gdb "$(BUILD_DIR)/$(BUILD_TARGET).elf"
