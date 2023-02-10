@@ -15,7 +15,7 @@ DEBUG = 1
 # 架构相关选项
 ARCH = -march=rv32ec -mabi=ilp32e
 # 系统优化选项配置
-OPT = -Og
+OPT = -Os
 # C语言标准
 STD = -std=gnu17
 
